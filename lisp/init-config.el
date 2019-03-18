@@ -122,15 +122,9 @@
       (lambda ()
         (set (make-local-variable 'company-backends) '(company-go))
         (company-mode)))
-;; go auto complete
-;;(require 'go-autocomplete)
-;;(require 'auto-complete-config)
-;; (ac-config-default)
-;; (setq ac-ignore-case t) ;; 忽略大小写
-;; 设置C-n来选择
-;; (setq ac-use-menu-map t)
-;; (define-key ac-menu-map "\C-n" 'ac-next)
-;; (define-key ac-menu-map "\C-p" 'ac-previous)
+
+;; org setting
+(setq org-startup-indented t) ;;设置org显示方式
 
 
 (provide 'init-config)

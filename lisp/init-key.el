@@ -29,6 +29,8 @@
   "RET" 'imenu-list-smart-toggle
   "n" 'neotree-toggle
   "b" 'ivy-switch-buffer
+  "d" 'dired-other-window
+  "1" 'delete-other-windows
   "j" 'ace-jump-char-mode)
 ;; evil neotree
 (evil-define-key 'normal neotree-mode-map (kbd "TAB") 'neotree-enter)
@@ -41,6 +43,7 @@
 (evil-define-key 'normal neotree-mode-map (kbd "A") 'neotree-stretch-toggle)
 (evil-define-key 'normal neotree-mode-map (kbd "H") 'neotree-hidden-file-toggle)
 (evil-define-key 'normal go-mode-map (kbd "gd") 'godef-jump-other-window)
+(evil-define-key 'normal org-mode-map (kbd "TAB") 'org-cycle)
 
 ;; 设置company C-n 选择
 (with-eval-after-load 'company

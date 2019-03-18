@@ -1,4 +1,3 @@
-
 ;; 配置插件源
 (when (>= emacs-major-version 24)
      (require 'package)
