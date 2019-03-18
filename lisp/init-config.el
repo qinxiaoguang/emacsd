@@ -126,6 +126,10 @@
 ;; org setting
 (setq org-startup-indented t) ;;设置org显示方式
 
+;; 设置编码格式
+(setq default-buffer-file-coding-system 'utf-8-unix)
+(set-language-environment 'utf-8)
+(prefer-coding-system 'utf-8)
 
 (provide 'init-config)
 ;;; init-config.el ends here
