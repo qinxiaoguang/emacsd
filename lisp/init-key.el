@@ -15,6 +15,7 @@
 
 ;; set C-x C-f to find-file-other-window
 (global-set-key (kbd "C-x C-f") 'find-file-other-window)
+(global-set-key (kbd "C-c C-o") 'company-files)
 
 ;; evil leader set
 (evil-leader/set-leader ",")
@@ -27,6 +28,7 @@
   "s" 'split-window-right
   "RET" 'imenu-list-smart-toggle
   "n" 'neotree-toggle
+  "b" 'ivy-switch-buffer
   "j" 'ace-jump-char-mode)
 ;; evil neotree
 (evil-define-key 'normal neotree-mode-map (kbd "TAB") 'neotree-enter)
@@ -38,6 +40,13 @@
 (evil-define-key 'normal neotree-mode-map (kbd "p") 'neotree-previous-line)
 (evil-define-key 'normal neotree-mode-map (kbd "A") 'neotree-stretch-toggle)
 (evil-define-key 'normal neotree-mode-map (kbd "H") 'neotree-hidden-file-toggle)
+(evil-define-key 'normal go-mode-map (kbd "gd") 'godef-jump-other-window)
+
+;; 设置company C-n 选择
+(with-eval-after-load 'company
+  (setq company-show-numbers nil)
+  (define-key company-active-map (kbd "C-n") #'company-select-next)
+  (define-key company-active-map (kbd "C-p") #'company-select-previous))
 
 (provide 'init-key)
 ;;; init-key.el ends here

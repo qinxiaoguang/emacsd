@@ -1,19 +1,8 @@
 ;;; 快速打开配置
-(defun open-init-file()
-  "open init file quickly"
-  (interactive)
-  (find-file "~/.emacs.d/init.el"))
-
-;;禁止生成自动备份文件
-(setq make-backup-files nil)
-
-;; 快速打开最近编辑的软件
-;; (autoload 'recentf "recent file mode" t)
-;; (recentf-mode 1)
-;; (setq recentf-max-menu-item 10)
-
-;; 选中后可直接编辑 并删除
-(delete-selection-mode 1)
+;; (defun open-init-file()
+  ;; "open init file quickly"
+  ;; (interactive)
+  ;; (find-file "~/.emacs.d/init.el"))
 
 ;; set js mode
 (setq auto-mode-alist
@@ -39,25 +28,8 @@
 ;; (with-eval-after-load 'dired
     ;; (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file))
 
-;; ido mode
-;; (setq ido-enable-flex-matching t)
-;; (setq ido-use-filename-at-point 'guess)
-;; (setq ido-everywhere t)          
-;; (ido-mode 1)
-
 (autoload 'smex "smex" t)
 (smex-initialize)
-
-;; 启动auto-complete
-;; (require 'auto-complete)
-;; (require 'auto-complete-config)
-;; (global-auto-complete-mode t)
-
-;; 输入3个字符才开始补全
-;; (setq ac-auto-start 2)
-
-;; 设置helm功能
-;;(require 'helm-config)
 
 ;; 设置ace-jump
 (autoload
@@ -88,6 +60,12 @@
 ;; ivy
 (ivy-mode 1)
 
+;; ivy fuzzy match
+(with-eval-after-load 'ivy
+  (push (cons #'swiper (cdr (assq t ivy-re-builders-alist)))
+        ivy-re-builders-alist)
+  (push (cons t #'ivy--regex-fuzzy) ivy-re-builders-alist))
+
 ;; 自动括号
 (setq electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
 (electric-pair-mode 1)
@@ -100,8 +78,7 @@
 (setq auto-save-list-file-prefix nil)
 
 ;; mode-line 美化
-(setq-default mode-line-format
-              (list '(:propertize " %l " face (:weight bold))
+(setq-default mode-line-format (list '(:propertize " %l " face (:weight bold))
                     'mode-line-mule-info
                     'mode-line-modified
                     'mode-line-remote " "
@@ -123,6 +100,38 @@
 
 ;; 高亮当前行
 (global-hl-line-mode t)
+
+;; 自动补全路径
+(setq company-backends '(company-files))
+
+;; 设置默认补全长度
+(setq company-minimum-prefix-length 1)
+;; company延长时间
+(setq company-idle-delay 0.1)
+
+;; go-mode
+;;(require 'go-mode-autoloads)
+;; go fmt before save
+(require 'go-mode)
+(require 'go-eldoc)
+(require 'company-go)
+(setq gofmt-command "goimports")
+(add-hook 'before-save-hook 'gofmt-before-save)
+(add-hook 'go-mode-hook 'go-eldoc-setup)
+(add-hook 'go-mode-hook
+      (lambda ()
+        (set (make-local-variable 'company-backends) '(company-go))
+        (company-mode)))
+;; go auto complete
+;;(require 'go-autocomplete)
+;;(require 'auto-complete-config)
+;; (ac-config-default)
+;; (setq ac-ignore-case t) ;; 忽略大小写
+;; 设置C-n来选择
+;; (setq ac-use-menu-map t)
+;; (define-key ac-menu-map "\C-n" 'ac-next)
+;; (define-key ac-menu-map "\C-p" 'ac-previous)
+
 
 (provide 'init-config)
 ;;; init-config.el ends here

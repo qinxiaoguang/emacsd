@@ -39,7 +39,10 @@
     evil-nerd-commenter
     ivy
     imenu-list
-) "default packages")
+    go-mode
+    go-eldoc
+    company-go
+    ) "default packages")
 
 (setq package-selected-packages qxg-packages)
 
