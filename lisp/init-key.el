@@ -36,6 +36,7 @@
 ;; evil neotree
 (evil-define-key 'normal my-keys-minor-mode-map (kbd "C-n") 'neotree-toggle)
 (evil-define-key 'normal my-keys-minor-mode-map (kbd "RET") 'imenu-list-smart-toggle)
+(evil-define-key 'normal my-keys-minor-mode-map (kbd "C-u") 'evil-scroll-up)
 (evil-define-key 'normal neotree-mode-map (kbd "TAB") 'neotree-enter)
 (evil-define-key 'normal neotree-mode-map (kbd "SPC") 'neotree-quick-look)
 (evil-define-key 'normal neotree-mode-map (kbd "q") 'neotree-hide)
