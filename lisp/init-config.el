@@ -2,7 +2,15 @@
 ;; (defun open-init-file()
   ;; "open init file quickly"
   ;; (interactive)
-  ;; (find-file "~/.emacs.d/init.el"))
+;; (find-file "~/.emacs.d/init.el"))
+
+;; 在下边的窗口打开eshell
+(defun open-eshell-below-window()
+  "open eshell below window"
+  (interactive)
+  (split-window-below)
+  (windmove-down)
+  (eshell))
 
 ;; set js mode
 (setq auto-mode-alist
@@ -130,6 +138,11 @@
 (setq default-buffer-file-coding-system 'utf-8-unix)
 (set-language-environment 'utf-8)
 (prefer-coding-system 'utf-8)
+
+;;缩进
+(setq-default tab-width 4)
+(setq-default indent-tabs-mode nil)
+(setq-default tab-always-indent nil)
 
 (provide 'init-config)
 ;;; init-config.el ends here

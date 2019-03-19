@@ -1,6 +1,5 @@
 ;;快速打开配置绑定到F2
 (global-set-key (kbd "<f2>") 'open-init-file)
-
 ;; smex
 (global-set-key (kbd "M-x") 'smex)
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
@@ -22,13 +21,13 @@
 ;; evil leader set
 (evil-leader/set-leader ",")
 (evil-leader/set-key
+  "e" 'open-eshell-below-window
   "f" 'find-file-other-window
   "q" 'evil-quit
   "w" 'save-buffer
   "cc" 'evilnc-comment-or-uncomment-lines
-  "v" 'split-window-below
-  "s" 'split-window-right
-  ;; "RET" 'imenu-list-smart-toggle
+  "v" 'split-window-right
+  "s" 'split-window-below
   "b" 'ivy-switch-buffer
   "d" 'dired-other-window
   "1" 'delete-other-windows
