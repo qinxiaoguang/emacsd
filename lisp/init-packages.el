@@ -26,6 +26,8 @@
     exec-path-from-shell
     ;;theme
     monokai-theme
+    ;; atom-one-dark-theme
+    smart-mode-line
     popwin
     smex
     ;; helm
@@ -41,6 +43,7 @@
     go-mode
     go-eldoc
     company-go
+    golden-ratio
     ) "default packages")
 
 (setq package-selected-packages qxg-packages)

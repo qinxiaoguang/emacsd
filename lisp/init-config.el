@@ -4,6 +4,7 @@
   ;; (interactive)
 ;; (find-file "~/.emacs.d/init.el"))
 
+;; ============================ defun start ===============================
 ;; 在下边的窗口打开eshell
 (defun open-eshell-below-window()
   "open eshell below window"
@@ -11,6 +12,51 @@
   (split-window-below)
   (windmove-down)
   (eshell))
+
+(defun random-true()
+  "return random true or false"
+  (interactive)
+  (if (= (random 2) 0)
+      t
+    nil))
+
+(golden-ratio-mode 1)
+;;godef jump new window
+(defun godef-jump-new-window()
+  "godef jump to new window"
+  (interactive)
+  (let ((r (random-true))
+       (p (point)))
+    (if r
+        (progn (split-window-below) (windmove-down))
+       (progn (split-window-right) (windmove-right)))
+    (godef-jump p))
+  (golden-ratio))
+
+;; find-file-new-window
+(defun find-file-new-window(filename &optional wildcards)
+  "find file to new window"
+  (interactive
+   (find-file-read-args "Find file in new window: "
+                        (confirm-nonexistent-file-or-buffer)))
+  (let ((r (random-true))
+       (p (point)))
+    (if r
+        (progn (split-window-below) (windmove-down))
+       (progn (split-window-right) (windmove-right)))
+    (find-file filename wildcards))
+  (golden-ratio))
+
+;; neotree-enter random
+(defun neotree-enter-random()
+  "find file to new window"
+  (interactive)
+  (if (random-true)
+      (neotree-enter-horizontal-split)
+    (neotree-enter-vertical-split))
+  (golden-ratio))
+
+;; ============================ defun end  ===============================
 
 ;; set js mode
 (setq auto-mode-alist
@@ -85,18 +131,6 @@
 (setq backup-inhibited t)
 (setq auto-save-list-file-prefix nil)
 
-;; mode-line 美化
-(setq-default mode-line-format (list '(:propertize " %l " face (:weight bold))
-                    'mode-line-mule-info
-                    'mode-line-modified
-                    'mode-line-remote " "
-                    '(:eval (propertize " %b " 'face (if (buffer-modified-p) '(:background "#d33682" :foreground "#fdf6e3" :weight bold)
-                                                       '(:background "#268bd2" :foreground "#fdf6e3" :weight normal))))
-                    '(:propertize " %p/%I " face (:background "gray60" :foreground "#fdf6e3"))
-                    '(:eval (propertize (concat " " (eyebrowse-mode-line-indicator) " ")))
-                    '(:eval (propertize (format-time-string "%p·%H:%M ") 'help-echo (format-time-string "%F %a") 'face '(:inherit 'font-lock-doc-face)))
-                    '(:propertize vc-mode face (:inherit font-lock-keyword-face :weight bold))
-                    " {%m} " "-%-"))
 
 ;; neotree
 (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
