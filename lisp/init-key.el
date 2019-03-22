@@ -34,6 +34,7 @@
   "1" 'delete-other-windows
   "go" 'golden-ratio
   "p" 'previous-buffer
+  "r" 'recentf-open-files-new-window
   "j" 'ace-jump-char-mode)
 
 ;; evil neotree
@@ -58,6 +59,10 @@
   (setq company-show-numbers nil)
   (define-key company-active-map (kbd "C-n") #'company-select-next)
   (define-key company-active-map (kbd "C-p") #'company-select-previous))
+
+;; 设置recentf dialog q为退出
+(with-eval-after-load 'recentf
+  (define-key recentf-dialog-mode-map (kbd "q") #'delete-window))
 
 (provide 'init-key)
 ;;; init-key.el ends here

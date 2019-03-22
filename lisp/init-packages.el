@@ -13,6 +13,7 @@
   '(
     ;; auto-complete
     ;; auto-complete-clang
+    recentf
     company
     ;; better editor
     hungry-delete
@@ -44,6 +45,7 @@
     go-eldoc
     company-go
     golden-ratio
+    magit
     ) "default packages")
 
 (setq package-selected-packages qxg-packages)

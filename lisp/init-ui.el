@@ -40,12 +40,9 @@
                                 (- (+ right right-fringe right-margin) ,reserve)))
               'face face))
 
-(defun buffer-encoding-abbrev ()
-  "The line ending convention used in the buffer."
-  (let ((buf-coding (format "%s" buffer-file-coding-system)))
-    (if (string-match "\\(dos\\|unix\\|mac\\)" buf-coding)
-        (match-string 1 buf-coding)
-      buf-coding)))
+(defun get-point-string()
+  "return point string"
+  (int-to-string (point)))
 
 (setq-default mode-line-format
               (list
@@ -63,17 +60,17 @@
                                                   '(:background "#268bd2" :foreground "#fdf6e3" :weight normal))))
                '(:eval (propertize "⮀" 'face (if (buffer-modified-p) '(:background "#f7de1c" :foreground "#d33682" :weight bold)
                                                   '(:background "#f7de1c" :foreground "#268bd2" :weight normal))))
-               '(:eval (propertize (concat "" vc-mode " ") 'face '(:inherit font-lock-keyword-face :weight bold :background "#f7de1c")))
+               '(:eval (propertize (concat "" vc-mode " " ) 'face '(:inherit font-lock-keyword-face :weight bold :background "#f7de1c")))
                '(:propertize "⮀" face (:background "#585858" :foreground "#f7de1c"))
                '(:propertize " [%m] " face (:weight bold :background "#585858" :foreground "#d7d75f"))
                '(:propertize "⮀" face (:background "#303030" :foreground "#585858"))
                '(:propertize  minor-mode-alist face (:background "#303030" :foreground "#9e9e9e"))
                '(:propertize " ⮁" face (:background "#303030" :foreground "#9e9e9e"))
-               (mode-line-fill '(:background "#303030" :foreground "#ffffff") 16)
+               (mode-line-fill '(:background "#303030" :foreground "#ffffff") 17)
                '(:propertize "⮂" face (:background "#303030" :foreground "#585858"))
                '(:propertize " (%l,%c) " face (:inherit font-lock-type-face :background "#585858" :foreground "#ffffff"))
                '(:propertize "⮂" face (:background "#585858" :foreground "#d0d0d0"))
-               '(:eval (propertize (concat " " (buffer-encoding-abbrev) "") 'face '(:inherit font-lock-keyword-face :weight bold :background "#d0d0d0" :foreground "#626262")))
+               '(:eval (propertize (concat " " (get-point-string) "") 'face '(:inherit font-lock-keyword-face :weight bold :background "#d0d0d0" :foreground "#626262")))
                '(:propertize "%-" face (:background "#d0d0d0" :foreground "#d0d0d0"))
                ))
 

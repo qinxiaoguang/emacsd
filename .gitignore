@@ -3,4 +3,5 @@ eshell/*
 ac-comphist.dat
 bookmarks
 elpa/*
-
+recentf
+transient/*

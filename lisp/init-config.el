@@ -33,6 +33,15 @@
     (godef-jump p))
   (golden-ratio))
 
+;; recentf-open-files-new-window
+(defun recentf-open-files-new-window()
+  "recentf new window"
+  (interactive)
+  (split-window-right)
+  (windmove-right)
+  (recentf-open-files))
+
+
 ;; find-file-new-window
 (defun find-file-new-window(filename &optional wildcards)
   "find file to new window"
@@ -177,6 +186,11 @@
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
 (setq-default tab-always-indent nil)
+
+;; recentf
+(require 'recentf)
+(recentf-mode 1)
+(setq recentf-max-menu-item 10)
 
 (provide 'init-config)
 ;;; init-config.el ends here
