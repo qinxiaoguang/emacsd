@@ -1,7 +1,3 @@
-smex-items
-eshell/*
-ac-comphist.dat
-bookmarks
-elpa/*
-recentf
-transient/*
+*
+!init.el
+!list/*

@@ -3,7 +3,6 @@
   ;; "open init file quickly"
   ;; (interactive)
 ;; (find-file "~/.emacs.d/init.el"))
-
 ;; ============================ defun start ===============================
 ;; 在下边的窗口打开eshell
 (defun open-eshell-below-window()
@@ -85,7 +84,9 @@
 
 ;; 主动加载 Dired Mode
 ;; (require 'dired)
-;; (defined-key dired-mode-map (kbd "RET") 'dired-find-alternate-file)
+;; (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file)
+
+(autoload 'dired "dired" t)
 
 ;; 延迟加载
 ;; (with-eval-after-load 'dired
@@ -130,8 +131,10 @@
   (push (cons t #'ivy--regex-fuzzy) ivy-re-builders-alist))
 
 ;; 自动括号
-(setq electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
-(electric-pair-mode 1)
+;; (setq electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
+;; (electric-pair-mode 1)
+(require 'autopair)
+(autopair-global-mode)
 
 ;; 关闭自动保存
 (setq auto-save-default nil)
@@ -152,17 +155,14 @@
 ;; 高亮当前行
 (global-hl-line-mode t)
 
-;; 自动补全路径
-(setq company-backends '(company-files))
-
+;; 自动补全路径, 自动代码补全，自动关键字补全等
+(setq company-backends '(company-files  company-dabbrev-code  company-dabbrev))
 ;; 设置默认补全长度
 (setq company-minimum-prefix-length 1)
 ;; company延长时间
 (setq company-idle-delay 0.1)
 
 ;; go-mode
-;;(require 'go-mode-autoloads)
-;; go fmt before save
 (require 'go-mode)
 (require 'go-eldoc)
 (require 'company-go)
@@ -176,6 +176,9 @@
 
 ;; org setting
 (setq org-startup-indented t) ;;设置org显示方式
+
+;; 设置org层级显示符号
+(setq org-bullets-bullet-list '("☰" "☷" "☯" "☭"))
 
 ;; 设置编码格式
 (setq default-buffer-file-coding-system 'utf-8-unix)
@@ -192,5 +195,10 @@
 (recentf-mode 1)
 (setq recentf-max-menu-item 10)
 
+;; which key
+(require 'which-key)
+(which-key-mode)
+
 (provide 'init-config)
 ;;; init-config.el ends here
+

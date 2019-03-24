@@ -19,7 +19,8 @@
     hungry-delete
     swiper
     counsel
-    smartparens
+    autopair
+    ;; smartparens
     ;; major-mode
     js2-mode
     ;; minor mode
@@ -46,6 +47,8 @@
     company-go
     golden-ratio
     magit
+    which-key
+    hydra
     ) "default packages")
 
 (setq package-selected-packages qxg-packages)
