@@ -13,6 +13,8 @@
   '(
     ;; auto-complete
     ;; auto-complete-clang
+    org
+    org-bullets
     recentf
     company
     ;; better editor
@@ -31,7 +33,7 @@
     ;; atom-one-dark-theme
     smart-mode-line
     popwin
-    smex
+    ;; smex
     ;; helm
     ace-jump-mode
     neotree
@@ -49,6 +51,9 @@
     magit
     which-key
     hydra
+    yasnippet
+    ivy-yasnippet
+    json-mode
     ) "default packages")
 
 (setq package-selected-packages qxg-packages)

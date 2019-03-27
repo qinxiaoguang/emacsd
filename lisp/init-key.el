@@ -1,8 +1,6 @@
 ;;快速打开配置绑定到F2
-(global-set-key (kbd "<f2>") 'open-init-file)
-;; smex
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+
+(global-set-key (kbd "M-x") 'counsel-M-x)
 ;; This is your old M-x.
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
@@ -12,38 +10,11 @@
 (global-set-key (kbd "M-h") 'windmove-left)
 (global-set-key (kbd "M-l") 'windmove-right)
 
-
-;; set C-x C-f to find-file-other-window
-(global-set-key (kbd "C-x C-f") 'find-file-other-window)
-(global-set-key (kbd "C-c C-o") 'company-files)
-
 ;; set minor mode to override source key
 (defvar my-keys-minor-mode-map (make-sparse-keymap) "my-keys-minor-mode keymap")
-;; evil leader set
-(evil-leader/set-leader ",")
-(evil-leader/set-key
-  "e" 'open-eshell-below-window
-  "f" 'find-file-new-window
-  "q" 'evil-quit
-  "w" 'save-buffer
-  "x" 'evil-save-and-quit
-  "cc" 'evilnc-comment-or-uncomment-lines
-  "v" 'split-window-right
-  "s" 'split-window-below
-  ;; ================ h prefix hydra set start ==============
-  "hw" 'hydra-window/body
-  ;; ================ h prefix hydra set end ==============
-  "b" 'ivy-switch-buffer
-  "d" 'dired-other-window
-  "1" 'delete-other-windows
-  "go" 'golden-ratio
-  "p" 'previous-buffer
-  "r" 'recentf-open-files-new-window
-  "j" 'ace-jump-char-mode)
 
 ;; evil neotree
 (evil-define-key 'normal my-keys-minor-mode-map (kbd "C-n") 'neotree-toggle)
-(evil-define-key 'normal my-keys-minor-mode-map (kbd "M-RET") 'imenu-list-smart-toggle)
 (evil-define-key 'normal my-keys-minor-mode-map (kbd "C-u") 'evil-scroll-up)
 (evil-define-key 'normal my-keys-minor-mode-map (kbd "C-s") 'swiper)
 (evil-define-key 'normal neotree-mode-map (kbd "TAB") 'neotree-enter)
@@ -58,6 +29,7 @@
 (evil-define-key 'normal go-mode-map (kbd "gd") 'godef-jump-new-window)
 (evil-define-key 'normal org-mode-map (kbd "TAB") 'org-cycle)
 (define-minor-mode my-keys-minor-mode "minor mode of key-binding" :init-value t :lighter "")
+(define-key my-keys-minor-mode-map (kbd "C-s") 'swiper)
 (my-keys-minor-mode 1)
 ;; 设置company C-n 选择
 (with-eval-after-load 'company
@@ -128,7 +100,7 @@
    "
 Movement^^        ^Split^         ^Switch^		^Resize^
 ----------------------------------------------------------------
-_h_ ←       	_v_ertical    	_b_uffer		_q_ X←
+^_h_ ←       	_v_ertical    	_b_uffer		_q_ X←
 _j_ ↓        	_x_ horizontal	_f_ind files	_w_ X↓
 _k_ ↑        	_z_ undo      	_a_ce 1		_e_ X↑
 _l_ →        	_Z_ reset      	_s_wap		_r_ X→
@@ -184,6 +156,36 @@ _SPC_ cancel	_o_nly this   	_d_elete
    ("Z" winner-redo)
    ("SPC" nil)
    )
+
+;; evil leader set
+(evil-leader/set-leader ",")
+(evil-leader/set-key
+  "e" 'open-eshell-below-window
+  "f" 'find-file-new-window
+  "q" 'evil-quit
+  "w" 'save-buffer
+  "x" 'evil-save-and-quit
+  "cc" 'evilnc-comment-or-uncomment-lines
+  "v" 'split-window-right
+  "s" 'split-window-below
+  ;; ================ h prefix hydra or hint set start ==============
+  "hw" 'hydra-window/body
+  "ho" 'hints-org
+  ;; ================ h prefix hydra or hint set end ==============
+  ;; ================ y prefix yasnippet set start ==============
+  "yn" 'yas-new-snippet ;;创建yas
+  "yd" 'yas-describe-tables ;; 显示当前的yas
+  "yc" 'ivy-yasnippet
+  ;; ================ y prefix yasnippet set end ==============
+  "b" 'ivy-switch-buffer
+  "d" 'dired-other-window
+  "1" 'delete-other-windows
+  "go" 'golden-ratio
+  "p" 'previous-buffer
+  "r" 'recentf-open-files-new-window
+  "RET" 'imenu-list-smart-toggle
+  "j" 'ace-jump-char-mode)
+
 
 (provide 'init-key)
 ;;; init-key.el ends here

@@ -40,7 +40,6 @@
   (windmove-right)
   (recentf-open-files))
 
-
 ;; find-file-new-window
 (defun find-file-new-window(filename &optional wildcards)
   "find file to new window"
@@ -92,8 +91,8 @@
 ;; (with-eval-after-load 'dired
     ;; (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file))
 
-(autoload 'smex "smex" t)
-(smex-initialize)
+;; (autoload 'smex "smex" t)
+;; (smex-initialize)
 
 ;; 设置ace-jump
 (autoload
@@ -108,7 +107,6 @@
 (add-hook 'after-init-hook 'global-flycheck-mode)
 
 (autoload 'windmove "windmove" t)
-
 ;; 设置flycheck pop显示
 (with-eval-after-load 'flycheck
   (flycheck-pos-tip-mode))
@@ -130,7 +128,7 @@
         ivy-re-builders-alist)
   (push (cons t #'ivy--regex-fuzzy) ivy-re-builders-alist))
 
-;; 自动括号
+;; 自动括号 
 ;; (setq electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
 ;; (electric-pair-mode 1)
 (require 'autopair)
@@ -148,15 +146,19 @@
 (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
 
 ;; 显示时间
-(display-time-mode 1)  
-(setq display-time-24hr-format t)  
-(setq display-time-day-and-date t)
+;; (display-time-mode 1)  
+;; (setq display-time-24hr-format t)  
+;; (setq display-time-day-and-date t)
 
 ;; 高亮当前行
 (global-hl-line-mode t)
 
 ;; 自动补全路径, 自动代码补全，自动关键字补全等
-(setq company-backends '(company-files  company-dabbrev-code  company-dabbrev))
+;; (setq company-backends '(company-files
+;;                          company-dabbrev-code
+;;                          company-dabbrev
+;; ))
+
 ;; 设置默认补全长度
 (setq company-minimum-prefix-length 1)
 ;; company延长时间
@@ -176,9 +178,38 @@
 
 ;; org setting
 (setq org-startup-indented t) ;;设置org显示方式
+(setq org-log-done 'time) ;; 任务完成后自动显示时间戳
+;; (setq org-log-done 'note) ;; 任务完成后可显示附加信息
+;; 设置优先级显示符号
+(setq org-priority-faces '((?A . (:foreground "red" :weight 'bold))
+                           (?B . (:foreground "yellow"))
+                           (?C . (:foreground "green"))))
+;; 设置capture位置
+;; (setq org-default-notes-file "~/.emacs.d/org/capture.org")
+;; 设置capture 模板
+;; (setq org-capture-templates
+;;    '(("l" "灵感" entry (file+headline "~/.emacs.d/org/写作创意.org" "创意")
+;;           "* %?\n  %i\n  %a")
+;;      ("j" "Journal" entry (file+datetree "~/.emacs.d/org/journal.org")
+;;           "* %?\n输入于： %U\n  %i\n  %a")))
 
+;; 子任务完成后，父任务自动标记为完成
+(defun org-summary-todo (n-done n-not-done)
+  "Switch entry to DONE when all subentries are done, to TODO otherwise."
+  (let (org-log-done org-log-states)   ; turn off logging
+    (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+(add-hook 'org-mode-hook 'org-bullets-mode)
+;; org语法高亮
+(setq org-src-fontify-natively t)
 ;; 设置org层级显示符号
-(setq org-bullets-bullet-list '("☰" "☷" "☯" "☭"))
+;; (setq org-bullets-bullet-list '("☰" "☷" "☯" "☭"))
+;; "○" "☉" "◎" "◉" "○" "◌" "◎" "●" "◦" "◯" "⚪" "⚫" "⚬" "❍" "￮" "⊙" "⊚" "⊛" "∙" "∘"
+;; "◐" "◑" "◒" "◓" "◴" "◵" "◶" "◷" "⚆" "⚇" "⚈" "⚉" "♁" "⊖" "⊗" "⊘"
+;; "☀" "♼" "☼" "☾" "☽" "☣" "§" "¶" "‡" "※" "✕" "△" "◇" "▶" "◀" "◈"
+;; ♥ ● ◇ ✚ ✜ ☯ ◆ ♠ ♣ ♦ ☢ ❀ ◆ ◖ ▶   "◉" "○" "✸" "✿"
+;; ❥
+(setq org-bullets-bullet-list '("❥" "➽" "➤" "☛" "♞" "✒" "♨"))
 
 ;; 设置编码格式
 (setq default-buffer-file-coding-system 'utf-8-unix)
@@ -198,7 +229,16 @@
 ;; which key
 (require 'which-key)
 (which-key-mode)
+;; message buffer height
+(setq max-mini-window-height 1.00)
+
+;;yasnippet
+(require 'yasnippet)
+(yas-global-mode 1)
+
+;;hungry-delete
+(require 'hungry-delete)
+(global-hungry-delete-mode)
 
 (provide 'init-config)
 ;;; init-config.el ends here
-

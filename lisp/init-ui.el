@@ -86,4 +86,13 @@
 
 ;; ==========================  mode-line 美化 end ==============================
 
+;; 设置更改状态的信息,!表格记录时间戳，@表示记录时间戳和附加信
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELED(c@)")))
+;; org todo颜色
+(setf org-todo-keyword-faces '(("TODO" . (:foreground "#ffde7d"  :weight bold))
+                                ("WAIT" . (:foreground "#ff2600"   :weight bold))
+                                ("CANCELED" . (:foreground "#00b8a9"  :weight bold))
+                                ("DONE" . (:foreground "#268bd2"  :weight bold))))
+
 (provide 'init-ui)
