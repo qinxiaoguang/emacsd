@@ -1,10 +1,52 @@
 ;; =======   my defun
+(defun split-window-htv ()
+  "horizontal to vertical 左右两屏切换为上下"
+  (interactive)
+  (let ((buf (current-buffer)))
+    ;; 选中左侧 window
+    (select-window (frame-first-window))
+    ;; 删掉右侧 window
+    (delete-other-windows)
+    ;; 分屏、选中下边 window
+    (select-window (split-window-below))
+    ;; 切换至最近 buffer
+    (switch-to-buffer (other-buffer))
+    ;; 选中原来 buffer 所在的 window
+    (select-window (get-buffer-window buf))))
+
+(defun split-window-vth ()
+  "vertical to horizontal"
+  (interactive)
+  (let ((buf (current-buffer)))
+    ;; 选中上侧 window
+    (select-window (frame-first-window))
+    ;; 删掉下侧 window
+    (delete-other-windows)
+    ;; 分屏、选中下边 window
+    (select-window (split-window-right))
+    ;; 切换至最近 buffer
+    (switch-to-buffer (other-buffer))
+    ;; 选中原来 buffer 所在的 window
+    (select-window (get-buffer-window buf))))
+
 (defun random-true()
   "return random true or false"
   (interactive)
   (if (= (random 2) 0)
       t
     nil))
+
+(defun right-or-below()
+  "when split, right or below
+  nil: right , t :below"
+  (interactive)
+  (cond
+   ((= (count-windows) 1) nil)
+   ((= (count-windows) 2) (progn (split-window-vth) t))
+   ((>= (count-windows) 3)
+    (if (> (window-height) 35) t
+      (random-true))))
+  )
 
 ;; 在下边的窗口打开eshell
 (defun open-eshell-below-window()
@@ -90,7 +132,7 @@
   (defun godef-jump-new-window()
     "godef jump to new window"
     (interactive)
-    (let ((r (random-true))
+    (let ((r (right-or-below))
           (p (point)))
       (if r
           (progn (split-window-below) (windmove-down))
@@ -104,7 +146,7 @@
     (interactive
      (find-file-read-args "Find file in new window: "
                           (confirm-nonexistent-file-or-buffer)))
-    (let ((r (random-true))
+    (let ((r (right-or-below))
           (p (point)))
       (if r
           (progn (split-window-below) (windmove-down))
@@ -164,7 +206,17 @@
     "ve" 'er/expand-region
     "vc" 'er/contract-region
     "vs" 'split-window-right
+    "vh" 'split-window-vth
     ;;== v prefix end ==
+    ;; == h start
+    "hv" 'split-window-htv
+    ;; == h end
+    ;; == m mark start
+    "mm" 'evil-multiedit-toggle-marker-here
+    "ma" 'evil-multiedit-match-all
+    "mn" 'evil-multiedit-match-and-next
+    "mwn" 'evil-multiedit-match-symbol-and-next
+                                        ; == m mark end
     "b" 'ivy-switch-buffer
     "d" 'dired-other-window
     "1" 'delete-other-windows
@@ -262,7 +314,13 @@
            (file+olp "~/.emacs.d/org/creature.org" "创意")
            "* %^{创意}\n CreateAt: %u\n")
           ))
-  )
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELED(c@)")))
+  ;; org todo颜色
+  (setf org-todo-keyword-faces '(("TODO" . (:foreground "#ffde7d"  :weight bold))
+                                 ("WAIT" . (:foreground "#ff2600"   :weight bold))
+                                 ("CANCELED" . (:foreground "#00b8a9"  :weight bold))
+                                 ("DONE" . (:foreground "#268bd2"  :weight bold)))))
 
 (use-package recentf
   :defer 0.5
@@ -541,5 +599,20 @@ _SPC_ cancel
 (use-package json-mode
   :ensure t
   :defer 1)
+
+(use-package smex
+  :ensure t)
+
+(use-package evil-multiedit
+  :ensure t
+  :defer 1
+  :init
+  (defun turn-off-hungry-delete-mode()
+    (interactive)
+    (hungry-delete-mode -1))
+  (add-hook 'evil-multiedit-state-entry-hook 'turn-off-hungry-delete-mode)
+  (add-hook 'evil-multiedit-insert-state-entry-hook 'turn-off-hungry-delete-mode)
+  (add-hook 'evil-multiedit-state-exit-hook 'hungry-delete-mode)
+  (add-hook 'evil-multiedit-state-exit-hook 'hungry-delete-mode))
 
 (provide 'init-packages)
