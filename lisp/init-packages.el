@@ -139,7 +139,7 @@
         (progn (split-window-right) (windmove-right)))
       (godef-jump p))
     (golden-ratio))
-
+  
   ;; find-file-new-window
   (defun find-file-new-window(filename &optional wildcards)
     "find file to new window"
@@ -153,14 +153,32 @@
         (progn (split-window-right) (windmove-right)))
       (find-file filename wildcards))
     (golden-ratio))
+  
+  (defun qxg-leader/set-leader (key)
+    "设置自己的leader"
+    (setq-default qxg-leader key))
+  (setq-default qxg-leader "SPC ") ;; 默认设置为 SPC
+  (defun qxg-leader/set-key (key def &rest bindings)
+    "自定义leader-set-key"
+    (while key
+      (setq key (concat qxg-leader key))
+      (evil-define-key 'normal 'global (kbd key) def)
+      (setq key (pop bindings))
+      (setq def (pop bindings))))
   :bind
   (("C-s" . swiper)
    ("C-u" . evil-scroll-up))
-  :config 
+  :config
   (evil-mode 1)
   (evil-define-key 'normal go-mode-map (kbd "gd") 'godef-jump-new-window)
   (evil-define-key 'normal org-mode-map (kbd "TAB") 'org-cycle)
-  (evil-define-key 'normal org-mode-map (kbd "M-h") 'windmove-left))
+  (evil-define-key 'normal org-mode-map (kbd "M-h") 'windmove-left)
+  ;; (evil-define-key 'normal 'global (kbd "SPC f") 'find-function)
+  (qxg-leader/set-key
+   "f" 'find-function
+   ;;  ===  b buffer setting
+   "bk" 'previous-buffer
+   "bj" 'next-buffer))
 
 (use-package evil-leader
   :ensure t
@@ -241,7 +259,7 @@
   )
 
 (use-package autopair
-             :ensure t
+  :ensure t
   :config
   (autopair-global-mode))
 
@@ -564,6 +582,8 @@ _SPC_ cancel
 
   ;; select region color
   (set-face-attribute 'region nil :background "#ffd700" :foreground "#000000")
+  ;; lazy highlight
+  (set-face-attribute 'lazy-highlight nil :background "#ffc15e" :foreground "#000000")
   )
 
 (use-package hlinum
