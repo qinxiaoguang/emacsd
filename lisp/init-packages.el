@@ -7,7 +7,7 @@
     (select-window (frame-first-window))
     ;; 删掉右侧 window
     (delete-other-windows)
-    ;; 分屏、选中下边 window
+
     (select-window (split-window-below))
     ;; 切换至最近 buffer
     (switch-to-buffer (other-buffer))
@@ -45,8 +45,7 @@
    ((= (count-windows) 2) (progn (split-window-vth) t))
    ((>= (count-windows) 3)
     (if (> (window-height) 35) t
-      (random-true))))
-  )
+      (random-true)))))
 
 ;; 在下边的窗口打开eshell
 (defun open-eshell-below-window()
@@ -104,24 +103,21 @@
   :defer 1
   :ensure t
   :init
-  (add-hook 'after-init-hook 'global-flycheck-mode)
-  :config
+  (add-hook 'after-init-hook 'global-flycheck-mode))
 
-  (use-package flycheck-pos-tip
-    :defer 1
-    :ensure t
-    :config
-    (flycheck-pos-tip-mode))
-  )
+(use-package flycheck-pos-tip
+  :defer 1
+  :ensure t
+  :after (flycheck)
+  :config
+  (flycheck-pos-tip-mode))
 
 (use-package dired
   :init
   ;; 减少dired模式的缓冲区数目
   (put 'dired-find-alternate-file 'disabled nil)
   :config
-  (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file)
-  )
-
+  (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file))
 
 (use-package evil
   :defer t
@@ -201,62 +197,53 @@
     "x" 'evil-save-and-quit
     "cc" 'evilnc-comment-or-uncomment-lines
     "s" 'split-window-below
-    ;; ================ h prefix hydra or hint set start ==============
+    ;; === h prefix : hydra, hints ===
     "hw" 'hydra-window/body
     "ho" 'hints-org
     "hv" 'hydra-visual/body
-    ;; ================ h prefix hydra or hint set end ==============
-    ;; ================ y prefix yasnippet set start ==============
+    ;; === y prefix : yasnippet ===
     "yn" 'yas-new-snippet ;;创建yas
     "yd" 'yas-describe-tables ;; 显示当前的yas
     "yc" 'ivy-yasnippet
-    ;; ================ y prefix yasnippet set end ==============
-    ;; ================ i prefix indent set start ==============
+    ;; === i prefix : indent ===
     "ir" 'indent-region
     "ib" 'indent-buffer
-    ;; ================ i prefix indent set end ==============
-    ;; ================ o prefix org set start ==============
+    ;; === o prefix : org ===
     "os" 'org-sort-entries
     "oc" 'org-capture
     "oa" 'org-agenda
-    ;; ================ o prefix org set end ==============
-    ;;== v prefix start ==
+    ;;=== v prefix : visual,vertical ===
     "ve" 'er/expand-region
     "vc" 'er/contract-region
     "vs" 'split-window-right
     "vh" 'split-window-vth
-    ;;== v prefix end ==
-    ;; == h start
+    ;; === h prefix : horizontal ===
     "hv" 'split-window-htv
-    ;; == h end
-    ;; == m mark start
+    ;; === m prefix : multiedit ===
     "mm" 'evil-multiedit-toggle-marker-here
     "ma" 'evil-multiedit-match-all
     "mn" 'evil-multiedit-match-and-next
     "mwn" 'evil-multiedit-match-symbol-and-next
-                                        ; == m mark end
     "b" 'ivy-switch-buffer
     "d" 'dired-other-window
     "1" 'delete-other-windows
+    ;; === g prefix : git,golden ===
+    "gg" 'magit
     "go" 'golden-ratio
     "p" 'previous-buffer
     "r" 'recentf-open-files-new-window
     "RET" 'imenu-list-smart-toggle
     ",j" 'ace-jump-line-mode
-    "j" 'ace-jump-char-mode)
-  )
-
+    "j" 'ace-jump-char-mode))
 
 (use-package ivy
   :defer 1
   :ensure t
   :config
   (ivy-mode 1)
-
   (push (cons #'swiper (cdr (assq t ivy-re-builders-alist)))
         ivy-re-builders-alist)
-  (push (cons t #'ivy--regex-fuzzy) ivy-re-builders-alist)
-  )
+  (push (cons t #'ivy--regex-fuzzy) ivy-re-builders-alist))
 
 (use-package autopair
   :ensure t
@@ -268,8 +255,7 @@
   :ensure t
   :init
   (setq gofmt-command "goimports")
-  (add-hook 'before-save-hook 'gofmt-before-save)
-  )
+  (add-hook 'before-save-hook 'gofmt-before-save))
 
 (use-package go-eldoc
   :defer 1
@@ -284,15 +270,12 @@
   (add-hook 'go-mode-hook
             (lambda ()
               (set (make-local-variable 'company-backends) '(company-go))
-              (company-mode)))
-  )
+              (company-mode))))
 
 (use-package org
   :defer 1
   :ensure t
   :init
-  (use-package org-bullets
-    :ensure t)
   ;; org setting
   (setq org-startup-indented t) ;;设置org显示方式
   (setq org-log-done 'time) ;; 任务完成后自动显示时间戳
@@ -340,6 +323,10 @@
                                  ("WAIT" . (:foreground "#ff2600"   :weight bold))
                                  ("CANCELED" . (:foreground "#00b8a9"  :weight bold))
                                  ("DONE" . (:foreground "#268bd2"  :weight bold)))))
+
+(use-package org-bullets
+  :after (org)
+  :ensure t)
 
 (use-package recentf
   :defer 0.5
@@ -460,8 +447,7 @@
     ("Z" dired-do-compress)
     ("q" nil)
     ("." nil :color blue))
-  :bind (:map dired-mode-map ("." . hydra-dired/body))
-  )
+  :bind (:map dired-mode-map ("." . hydra-dired/body)))
 
 (use-package expand-region
   :defer 1
@@ -478,8 +464,7 @@ _SPC_ cancel
 "
     ("+" er/expand-region)
     ("-" er/contract-region)
-    ("SPC" nil))
-  )
+    ("SPC" nil)))
 
 (use-package linum
   :defer t
@@ -495,6 +480,7 @@ _SPC_ cancel
   :init
   ;; ==========================  mode-line 美化 start ==============================
   ;; mode-line 右侧填充
+  (use-package window-numbering)
   (defun mode-line-fill (face reserve)
     "Return empty space using FACE and leaving RESERVE space on the right."
     (unless reserve
@@ -528,10 +514,8 @@ _SPC_ cancel
       (let* ((num (window-numbering-get-number))
              (str (when num (int-to-string num))))
         (spaceline--unicode-number str))))
-
   :config
   (load-theme 'monokai 1)
-  (use-package window-numbering)
   (setq-default mode-line-format
                 (list
                  '(:eval (propertize (window-number-mode-line) 'face '(:inherit font-lock-keyword-face :weight bold :background "#1c1c1c" :foreground "#f7de1c")))
@@ -583,8 +567,7 @@ _SPC_ cancel
   ;; select region color
   (set-face-attribute 'region nil :background "#ffd700" :foreground "#000000")
   ;; lazy highlight
-  (set-face-attribute 'lazy-highlight nil :background "#ffc15e" :foreground "#000000")
-  )
+  (set-face-attribute 'lazy-highlight nil :background "#ffc15e" :foreground "#000000"))
 
 (use-package hlinum
   :ensure t
@@ -635,5 +618,16 @@ _SPC_ cancel
   (add-hook 'evil-multiedit-insert-state-entry-hook 'turn-off-hungry-delete-mode)
   (add-hook 'evil-multiedit-state-exit-hook 'hungry-delete-mode)
   (add-hook 'evil-multiedit-state-exit-hook 'hungry-delete-mode))
+
+(use-package magit
+  :defer 1
+  :ensure t)
+
+(use-package evil-magit
+  :defer 1
+  :ensure t
+  :init
+  (setq evil-magit-state 'normal)
+  (setq evil-magit-use-y-for-yank t))
 
 (provide 'init-packages)
