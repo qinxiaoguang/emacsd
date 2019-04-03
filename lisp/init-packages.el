@@ -7,7 +7,6 @@
     (select-window (frame-first-window))
     ;; 删掉右侧 window
     (delete-other-windows)
-
     (select-window (split-window-below))
     ;; 切换至最近 buffer
     (switch-to-buffer (other-buffer))
@@ -53,7 +52,8 @@
   (interactive)
   (split-window-below)
   (windmove-down)
-  (eshell))
+  (eshell)
+  (company-mode -1))
 ;; =======   my defun
 
 (use-package benchmark-init
@@ -63,7 +63,7 @@
   (add-hook 'after-init-hook 'benchmark-init/deactivate))
 
 (use-package golden-ratio
-  :defer 1
+  :defer 0.3
   :ensure t
   :commands (golden-ratio)
   :config
@@ -113,7 +113,8 @@
   (flycheck-pos-tip-mode))
 
 (use-package dired
-  :init
+  :defer 1
+  :config
   ;; 减少dired模式的缓冲区数目
   (put 'dired-find-alternate-file 'disabled nil)
   :config
@@ -176,6 +177,14 @@
    "bk" 'previous-buffer
    "bj" 'next-buffer))
 
+(use-package evil-nerd-commenter
+  :defer 1
+  :ensure t)
+
+(use-package imenu-list
+  :defer 1
+  :ensure t)
+
 (use-package evil-leader
   :ensure t
   :init
@@ -185,10 +194,8 @@
     (interactive)
     (indent-region (point-min) (point-max)))
   :config
-  (use-package imenu-list :ensure t)
   (global-evil-leader-mode)
   (evil-leader/set-leader ",")
-  (use-package evil-nerd-commenter :ensure t)
   (evil-leader/set-key
     "ee" 'open-eshell-below-window
     "f" 'find-file-new-window
@@ -269,7 +276,7 @@
   :init
   (add-hook 'go-mode-hook
             (lambda ()
-              (set (make-local-variable 'company-backends) '(company-go))
+              (set (make-local-variable 'company-backends) '((company-go company-dabbrev-code)))
               (company-mode))))
 
 (use-package org
@@ -332,7 +339,7 @@
   :defer 0.5
   :ensure t
   :init
-  (setq recentf-max-menu-item 10)
+  (setq recentf-auto-cleanup 'never)
   ;; recentf-open-files-new-window
   (defun recentf-open-files-new-window()
     "recentf new window"
@@ -346,7 +353,7 @@
   (recentf-mode 1))
 
 (use-package which-key
-  :defer 1
+  :defer 0.5
   :ensure t
   :config
   (which-key-mode))
@@ -388,7 +395,7 @@
   (window-numbering-mode 1))
 
 (use-package counsel
-  :defer 0.5
+  :defer 0.2
   :ensure t
   :bind
   ("M-x" . counsel-M-x))
@@ -396,6 +403,7 @@
 (use-package hydra
   :defer 1
   :ensure t
+  :after dired
   :init
   (defhydra hydra-dired (:hint nil :color pink)
     "
@@ -451,20 +459,7 @@
 
 (use-package expand-region
   :defer 1
-  :ensure t
-  :init
-  ;;; hydra window move
-  (defhydra hydra-visual ()
-    "
-Movement^^
-------------
-^_+_ expand
-_-_ contract
-_SPC_ cancel
-"
-    ("+" er/expand-region)
-    ("-" er/contract-region)
-    ("SPC" nil)))
+  :ensure t)
 
 (use-package linum
   :defer t
@@ -587,13 +582,6 @@ _SPC_ cancel
   :defer t
   :commands (show-paren-function show-paren-mode)
   :init
-  ;; 增强show-parent
-  (define-advice show-paren-function (:around (fn) fix-show-paren-function)
-    "Highlight enclosing parens."
-    (cond ((looking-at-p "\\s(") (funcall fn))
-          (t (save-excursion
-               (ignore-errors (backward-up-list))
-               (funcall fn)))))
   ;; color
   (custom-set-faces
    '(show-paren-match ((t (:background "#000000" :foreground "#ff8700" :weight normal)))))
@@ -629,5 +617,21 @@ _SPC_ cancel
   :init
   (setq evil-magit-state 'normal)
   (setq evil-magit-use-y-for-yank t))
+
+(use-package anaconda-mode
+  :defer 1
+  :ensure
+  :config
+  (add-hook 'python-mode-hook 'anaconda-mode)
+  (add-hook 'python-mode-hook 'anaconda-eldoc-mode))
+
+(use-package company-anaconda
+  :defer 1
+  :ensure
+  :config
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (set (make-local-variable 'company-backends) '(company-anaconda))
+              (company-mode))))
 
 (provide 'init-packages)
