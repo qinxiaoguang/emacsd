@@ -1,4 +1,10 @@
-*
-!init.el
-!list/*
-!snippets/*
+anaconda-mode/*
+auto-save-list/*
+bookmarks
+elpa/*
+elpab/*
+eshell/*
+recentf
+smex-items
+transient/*
+org/*

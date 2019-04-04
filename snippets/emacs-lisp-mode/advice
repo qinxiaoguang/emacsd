@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: define-advice
+# key: advice
+# --
+
+(define-advice $1 (:around (orig-fun &optional args &rest r) $2)
+  ;; (apply orig-fun args r)
+  ;; (funcall orig-fun args))
