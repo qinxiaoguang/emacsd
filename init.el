@@ -40,7 +40,6 @@
 
 ;; mode line settings
 (line-number-mode t)
-(column-number-mode t)
 (size-indication-mode t)
 
 ;; enable y/n answers
@@ -58,21 +57,6 @@
 (set-default-coding-systems 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
-
-;; hippie expand is dabbrev expand on steroids
-(setq hippie-expand-try-functions-list '(try-expand-dabbrev
-                                         try-expand-dabbrev-all-buffers
-                                         try-expand-dabbrev-from-kill
-                                         try-complete-file-name-partially
-                                         try-complete-file-name
-                                         try-expand-all-abbrevs
-                                         try-expand-list
-                                         try-expand-line
-                                         try-complete-lisp-symbol-partially
-                                         try-complete-lisp-symbol))
-
-;; smart tab behavior - indent or complete
-(setq tab-always-indent 'complete)
 
 (when (fboundp 'tool-bar-mode)
   (tool-bar-mode -1))
@@ -93,7 +77,6 @@
 (setq max-mini-window-height 1.00)
 
 (require 'use-package)
-;; (setq use-package-verbose 0)
 
 ;; 加载init-packagess
 (require 'init-packages)

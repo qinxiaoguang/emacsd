@@ -171,6 +171,7 @@
   (evil-define-key 'normal org-mode-map (kbd "TAB") 'org-cycle)
   (evil-define-key 'normal org-mode-map (kbd "M-h") 'windmove-left)
   ;; (evil-define-key 'normal 'global (kbd "SPC f") 'find-function)
+  (evil-define-key 'insert 'global (kbd "TAB") '(lambda() (interactive) (insert "\t")))
   (qxg-leader/set-key
    "f" 'find-function
    ;;  ===  b buffer setting
@@ -336,7 +337,7 @@
   :ensure t)
 
 (use-package recentf
-  :defer 0.5
+  :defer 0.2
   :ensure t
   :init
   (setq recentf-auto-cleanup 'never)
@@ -369,6 +370,7 @@
   :defer 1
   :ensure t
   :config
+  (setq hungry-delete-chars-to-skip " \t\r\f\v")
   (global-hungry-delete-mode))
 
 
@@ -558,7 +560,6 @@
         evil-motion-state-tag   (propertize "[MOTION]" 'face '(:background "#afd700" :foreground "#fdf6e3" :weight bold))
         evil-visual-state-tag   (propertize " VISUAL " 'face '(:background "#ef8606" :foreground "#881300" :weight bold))
         evil-operator-state-tag (propertize " OPERATOR " 'face '(:background "#ff2600" :foreground "#fdf6e3" :weight bold)))
-
   ;; select region color
   (set-face-attribute 'region nil :background "#ffd700" :foreground "#000000")
   ;; lazy highlight
