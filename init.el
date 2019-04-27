@@ -28,10 +28,22 @@
 ;; disable blink
 (blink-cursor-mode -1)
 
+;; set initial scratch message nil
+(setq initial-scratch-message ";; initial done")
+
 ;; disable startup screen
 (setq inhibit-splash-screen 1)
 (setq inhibit-startup-screen t)
 (setq-default cursor-type 'bar)
+
+;; 开机最大屏幕
+;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
+(toggle-frame-fullscreen)
+
+;; 设置meta按键等,目前不需要
+;; (setq mac-command-modifier 'meta)
+;; (setq mac-control-modifier 'control)
+;; (setq mac-option-modifier 'alt)
 
 ;; nice scrolling
 (setq scroll-margin 0
@@ -75,6 +87,17 @@
 
 ;; message buffer height
 (setq max-mini-window-height 1.00)
+
+(defun self-font()
+  (interactive)
+  (set-frame-font (format "%s:pixelsize=%d" "Monaco" 13) t)
+  (dolist (charset '(kana han symbol cjk-misc bopomofo))
+    (set-fontset-font (frame-parameter nil 'font) charset
+                      (font-spec :family "Hiragino Sans GB W3" :size 16))))
+
+(if window-system (self-font))
+
+(setenv "RUST_SRC_PATH" "/Users/qinxiaoguang01/.rust/src")
 
 (require 'use-package)
 

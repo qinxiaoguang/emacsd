@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name:orgverse 
+# key: orgverse
+# --
+#+BEGIN_VERSE
+$1
+#+END_VERSE

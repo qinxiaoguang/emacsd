@@ -8,3 +8,5 @@ recentf
 smex-items
 transient/*
 org/*
+lisp/emacs-guess-word-game/*
+lisp/img/*

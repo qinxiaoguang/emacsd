@@ -171,12 +171,19 @@
   (evil-define-key 'normal org-mode-map (kbd "TAB") 'org-cycle)
   (evil-define-key 'normal org-mode-map (kbd "M-h") 'windmove-left)
   ;; (evil-define-key 'normal 'global (kbd "SPC f") 'find-function)
-  (evil-define-key 'insert 'global (kbd "TAB") '(lambda() (interactive) (insert "\t")))
+  ;; (evil-define-key 'insert 'global (kbd "TAB") '(lambda() (interactive) (insert "\t")))
   (qxg-leader/set-key
+   ;; === o prefix : outline-minor ===
+   "ot" 'outline-hide-body
+   "oe" 'outline-show-entry
+   "oo" 'outline-hide-other
+   "oc" 'outline-hide-entry
+   "oa" 'outline-show-all
    "f" 'find-function
    ;;  ===  b buffer setting
-   "bk" 'previous-buffer
-   "bj" 'next-buffer))
+   "s" 'qxg/capture-screenshot ;; screenshot
+   "p" 'previous-buffer
+   "n" 'next-buffer))
 
 (use-package evil-nerd-commenter
   :defer 1
@@ -220,6 +227,8 @@
     "os" 'org-sort-entries
     "oc" 'org-capture
     "oa" 'org-agenda
+    "ot" 'org-toggle-inline-images
+    "op" 'org-publish
     ;;=== v prefix : visual,vertical ===
     "ve" 'er/expand-region
     "vc" 'er/contract-region
@@ -238,7 +247,10 @@
     ;; === g prefix : git,golden ===
     "gg" 'magit
     "go" 'golden-ratio
-    "p" 'previous-buffer
+    ;; === p prefix : profiler ===
+    "ps" 'profiler-start
+    "pe" 'profiler-stop
+    "pr" 'profiler-report
     "r" 'recentf-open-files-new-window
     "RET" 'imenu-list-smart-toggle
     ",j" 'ace-jump-line-mode
@@ -300,6 +312,7 @@
   (add-hook 'org-mode-hook 'org-bullets-mode)
   ;; org code语法高亮
   (setq org-src-fontify-natively t)
+  (add-hook 'org-mode-hook 'toggle-truncate-lines) ;; 设置org自动换行
   (setq org-bullets-bullet-list '("❥" "➽" "➤" "☛" "♞" "✒" "♨"))
   (setq org-agenda-files (list "~/.emacs.d/org"))
   ;; Org capture
@@ -634,5 +647,177 @@
             (lambda ()
               (set (make-local-variable 'company-backends) '(company-anaconda))
               (company-mode))))
+
+(use-package web-mode
+  :defer 2
+  :ensure)
+
+(use-package ox-publish
+  :after org
+  :config
+  (setq org-export-with-section-numbers nil) ;this set the section with no number
+  (setq org-html-validation-link nil) ;makes no validation below.
+  (use-package ox-html)
+  (use-package org-id)
+  (use-package org-ref :ensure t)
+  (use-package org-ref-wos)
+  (use-package org-ref-scopus)
+  (use-package org-ref-pubmed)
+  (setq org-html-head-include-default-style nil) ;; 取消默认的css
+  (setq org-html-head-include-scripts nil) ;; 取消默认的js
+  (setq org-html-head-extra "<link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/static/img/favicon.ico\">\n<link rel=\"stylesheet\" type=\"text/css\" href=\"/static/css/htmlize.css\"/>\n<link rel=\"stylesheet\" type=\"text/css\" href=\"/static/css/readtheorg.css\"/><link rel=\"stylesheet\" type=\"text/css\" href=\"/static/css/orgstyle.css\"/>\n<script src=\"https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js\"></script>\n<script src=\"https://cdn.bootcss.com/twitter-bootstrap/3.3.4/js/bootstrap.min.js\"></script>\n<script type=\"text/javascript\" src=\"/static/js/jquery.stickytableheaders.min.js\"></script>\n<script type=\"text/javascript\" src=\"/static/js/readtheorg.js\"></script>\n<script type=\"text/javascript\" src=\"/static/js/orgscript.js\"></script>")
+  
+  (defun my-org-publish-sitemap-default-entry (entry style project)
+    "my sitemap entry"
+    (cond ((not (directory-name-p entry))
+	       (concat (format-time-string "[%Y-%m-%d]" (org-publish-find-date entry project)) " "
+                   (format "[[file:%s][%s]]" entry (org-publish-find-title entry project))))
+	      ((eq style 'tree)
+	       ;; Return only last subdir.
+	       (file-name-nondirectory (directory-file-name entry)))
+	      (t entry)))
+
+  (defun my-org-list-to-org (list &optional params)
+    "my list to org"
+    (let* ((make-item
+            (lambda (type _depth &optional c)
+              (concat (if (eq type 'ordered) "1. " "* ")
+                      (and c (format "[@%d] " c)))))
+           (defaults
+             (list :istart make-item
+                   :icount make-item
+                   :ifmt (lambda (_type contents)
+                           (replace-regexp-in-string "\n" "\n  " contents))
+                   :dtend " :: "
+                   :cbon "[X] "
+                   :cboff "[ ] "
+                   :cbtrans "[-] ")))
+      (org-list-to-generic list (org-combine-plists defaults params))))
+  
+  (defun my-org-publish-sitemap (title list)
+    "my render sitemap"
+    (concat "#+TITLE: " title "\n\n"
+            (my-org-list-to-org list)))
+
+  ;; ====== 截图相关 =====
+  (defun qxg/insert-org-or-md-img-link (prefix imagename)
+    (if (equal (file-name-extension (buffer-file-name)) "org")
+        (insert (format "[[%s][%s%s]]" imagename prefix imagename))
+      (insert (format "![%s](%s%s)" imagename prefix imagename))))
+
+  (defun qxg/capture-screenshot (basename)
+    "Take a screenshot into a time stamped unique-named file in the
+  same directory as the org-buffer/markdown-buffer and insert a link to this file."
+    (interactive "sScreenshot name: ")
+    (if (equal basename "")
+        (setq basename (format-time-string "%Y%m%d_%H%M%S")))
+    (setq fullpath
+          (concat (file-name-directory (buffer-file-name))
+                  "../../static/img/"
+                  (file-name-base (buffer-file-name))
+                  "_"
+                  basename))
+    (setq relativepath
+          (concat (file-name-base (buffer-file-name))
+                  "_"
+                  basename
+                  ".png"))
+    (if (file-exists-p (file-name-directory fullpath))
+        (progn
+          (call-process "screencapture" nil nil nil "-s" (concat fullpath ".png"))
+          (qxg/insert-org-or-md-img-link "https://qinxiaoguang.github.io/static/img/" relativepath))
+      (progn
+        (call-process "screencapture" nil nil nil "-s" (concat basename ".png"))
+        (qxg/insert-org-or-md-img-link "./" (concat basename ".png"))))
+    (insert "\n"))
+  ;; ====== 截图相关 =====
+  (use-package htmlize :ensure t)
+  (setq org-publish-project-alist
+        '(
+          ;;first, the notes component
+          ("org-notes"
+           :base-directory "~/gitpage/blog/org"   ;this is your org files root  directory
+           :base-extension "org"
+           :publishing-directory "~/gitpage/blog/" ;your published html files is here.
+           :recursive t          ;if it is t, you will have your sub-directory published.
+           :publishing-function org-html-publish-to-html;The manual publish functionis old, use this one.
+           :html-link-home "/index.html" ;Home 文件的路径
+           :html-link-up "/index.html" ;Home 文件的路径
+           :headline-levels 4             ; Just the default for this project.
+           :auto-index t
+           :index-filename "index.org"
+           :auto-preamble t
+           :htmlize-source t ;this set source-code highlighting in html publish
+           :org-html-head-include-default-style nil ;set default html style to nil
+           :auto-sitemap t   ;sitemap
+           :html-link-org-files-as-html  org-html-link-org-files-as-html
+           :sitemap-sort-FILES anti-chronologically
+           :sitemap-function my-org-publish-sitemap
+           :sitemap-filename "index.org"
+           :sitemap-format-entry my-org-publish-sitemap-default-entry
+           :sitemap-date-format "%Y-%m-%s %H:%M"
+           :sitemap-title "佛系少年"
+           ;; :export-creator-info nil    ;禁止在 postamble 显示"Created by Org"
+	       ;; :export-author-info nil     ;禁止在 postamble 显示 "Author: Your Name"
+           :table-of-contents t      ;禁止生成文章目录，如果要生成，将 nil 改为 t
+	       ;; :section-numbers nil        ;禁止在段落标题前使用数字，如果使用，将 nil 改为 t
+           :style-include-default nil  ;禁用默认 css 样式,使用自定义css
+           :author "qxg"
+           :email "qinxiaoguang01@gmail.com"
+           )
+          ;; ;;second,the static component, static means we won't compile it, juse copy it.
+          ;; ("org-static"
+          ;;  :base-directory "~/gitpage/blog/"
+          ;;  :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+          ;;  :publishing-directory "~/gitpage/blog/post"
+          ;;  :recursive t
+          ;;  :publishing-function org-publish-attachment    ; treat the files with extension above as attachment.
+          ;;  )
+          ;;third, the publish component
+          ;; ("org" :components ("org-static" "org-notes"))  ; our project name is org, consist of two parts.
+          )))
+
+(use-package reveal-in-osx-finder :defer t
+  :ensure t)
+
+;; (use-package disable-mouse :ensure t :defer t
+;;   :config
+;;   (global-disable-mouse-mode)
+;;   (mapc #'disable-mouse-in-keymap
+;;         (list evil-motion-state-map
+;;               evil-normal-state-map
+;;               evil-visual-state-map
+;;               evil-insert-state-map)))
+
+(use-package rust-mode :ensure t :defer t
+  :config
+  (use-package racer :ensure t
+    :config
+    (setq racer-cmd "/Users/qinxiaoguang01/.cargo/bin/racer")
+    (setq racer-rust-src-path "/Users/qinxiaoguang01/.rust/src"))
+  (use-package company-racer :ensure t
+    :config
+    (setq company-racer-executable "/Users/qinxiaoguang01/.cargo/bin/racer"))
+  (use-package flycheck-rust :ensure t)
+  (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
+  (add-hook 'rust-mode-hook
+            '(lambda ()
+               ;; Enable racer
+               (racer-activate)
+               ;; Hook in racer with eldoc to provide documentation
+               (racer-turn-on-eldoc)
+               ;; Use flycheck-rust in rust-mode
+               (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
+               ;; Use company-racer in rust mode
+               (set (make-local-variable 'company-backends) '(company-racer))
+               ;; Key binding to jump to method definition
+               (local-set-key (kbd "M-.") #'racer-find-definition)
+               ;; Key binding to auto complete and indent
+               (local-set-key (kbd "TAB") #'racer-complete-or-indent))))
+
+(use-package exec-path-from-shell :ensure t
+  :config
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
 
 (provide 'init-packages)
