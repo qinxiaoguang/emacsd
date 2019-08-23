@@ -303,6 +303,7 @@
   (setq org-priority-faces '((?A . (:foreground "red" :weight 'bold))
                              (?B . (:foreground "yellow"))
                              (?C . (:foreground "green"))))
+  
   ;; 子任务完成后，父任务自动标记为完成
   (defun org-summary-todo (n-done n-not-done)
     "Switch entry to DONE when all subentries are done, to TODO otherwise."
@@ -650,12 +651,15 @@
 
 (use-package web-mode
   :defer 2
-  :ensure)
+  :ensure
+  :config
+  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode)))
 
 (use-package ox-publish
   :after org
   :config
   (setq org-export-with-section-numbers nil) ;this set the section with no number
+  (setq org-export-with-sub-superscripts nil) ;dont use _ ^ 
   (setq org-html-validation-link nil) ;makes no validation below.
   (use-package ox-html)
   (use-package org-id)
@@ -702,7 +706,7 @@
   ;; ====== 截图相关 =====
   (defun qxg/insert-org-or-md-img-link (prefix imagename)
     (if (equal (file-name-extension (buffer-file-name)) "org")
-        (insert (format "[[%s][%s%s]]" imagename prefix imagename))
+        (insert (format "[[%s%s]]" prefix imagename))
       (insert (format "![%s](%s%s)" imagename prefix imagename))))
 
   (defun qxg/capture-screenshot (basename)
@@ -725,7 +729,7 @@
     (if (file-exists-p (file-name-directory fullpath))
         (progn
           (call-process "screencapture" nil nil nil "-s" (concat fullpath ".png"))
-          (qxg/insert-org-or-md-img-link "https://qinxiaoguang.github.io/static/img/" relativepath))
+          (qxg/insert-org-or-md-img-link "http://q.qxgzone.com/static/img/" relativepath))
       (progn
         (call-process "screencapture" nil nil nil "-s" (concat basename ".png"))
         (qxg/insert-org-or-md-img-link "./" (concat basename ".png"))))
@@ -751,31 +755,17 @@
            :org-html-head-include-default-style nil ;set default html style to nil
            :auto-sitemap t   ;sitemap
            :html-link-org-files-as-html  org-html-link-org-files-as-html
-           :sitemap-sort-FILES anti-chronologically
+           :sitemap-sort-files anti-chronologically
            :sitemap-function my-org-publish-sitemap
            :sitemap-filename "index.org"
            :sitemap-format-entry my-org-publish-sitemap-default-entry
            :sitemap-date-format "%Y-%m-%s %H:%M"
            :sitemap-title "佛系少年"
-           ;; :export-creator-info nil    ;禁止在 postamble 显示"Created by Org"
-	       ;; :export-author-info nil     ;禁止在 postamble 显示 "Author: Your Name"
            :table-of-contents t      ;禁止生成文章目录，如果要生成，将 nil 改为 t
-	       ;; :section-numbers nil        ;禁止在段落标题前使用数字，如果使用，将 nil 改为 t
            :style-include-default nil  ;禁用默认 css 样式,使用自定义css
            :author "qxg"
            :email "qinxiaoguang01@gmail.com"
-           )
-          ;; ;;second,the static component, static means we won't compile it, juse copy it.
-          ;; ("org-static"
-          ;;  :base-directory "~/gitpage/blog/"
-          ;;  :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
-          ;;  :publishing-directory "~/gitpage/blog/post"
-          ;;  :recursive t
-          ;;  :publishing-function org-publish-attachment    ; treat the files with extension above as attachment.
-          ;;  )
-          ;;third, the publish component
-          ;; ("org" :components ("org-static" "org-notes"))  ; our project name is org, consist of two parts.
-          )))
+           ))))
 
 (use-package reveal-in-osx-finder :defer t
   :ensure t)
@@ -789,31 +779,36 @@
 ;;               evil-visual-state-map
 ;;               evil-insert-state-map)))
 
-(use-package rust-mode :ensure t :defer t
-  :config
-  (use-package racer :ensure t
-    :config
-    (setq racer-cmd "/Users/qinxiaoguang01/.cargo/bin/racer")
-    (setq racer-rust-src-path "/Users/qinxiaoguang01/.rust/src"))
-  (use-package company-racer :ensure t
-    :config
-    (setq company-racer-executable "/Users/qinxiaoguang01/.cargo/bin/racer"))
-  (use-package flycheck-rust :ensure t)
-  (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
-  (add-hook 'rust-mode-hook
-            '(lambda ()
-               ;; Enable racer
-               (racer-activate)
-               ;; Hook in racer with eldoc to provide documentation
-               (racer-turn-on-eldoc)
-               ;; Use flycheck-rust in rust-mode
-               (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
-               ;; Use company-racer in rust mode
-               (set (make-local-variable 'company-backends) '(company-racer))
-               ;; Key binding to jump to method definition
-               (local-set-key (kbd "M-.") #'racer-find-definition)
-               ;; Key binding to auto complete and indent
-               (local-set-key (kbd "TAB") #'racer-complete-or-indent))))
+;; (use-package rust-mode :ensure t :defer t
+;;   :config
+;;   (use-package cargo
+;;   :hook (rust-mode . cargo-minor-mode))
+;;   (use-package racer :ensure t
+;;     :config
+;;     (setq racer-cmd "/Users/qinxiaoguang01/.cargo/bin/racer")
+;;     (setq racer-rust-src-path "/Users/qinxiaoguang01/.rust/src"))
+;;   (use-package company-racer :ensure t
+;;     :config
+;;     (setq company-racer-executable "/Users/qinxiaoguang01/.cargo/bin/racer"))
+;;   (use-package flycheck-rust :ensure t)
+;;   (add-hook 'rust-mode-hook #'racer-mode)
+;;   (add-hook 'racer-mode-hook #'eldoc-mode)
+;;   (add-hook 'racer-mode-hook #'company-mode)
+;;   (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
+;;   (add-hook 'rust-mode-hook
+;;             '(lambda ()
+;;                ;; Enable racer
+;;                (racer-activate)
+;;                ;; Hook in racer with eldoc to provide documentation
+;;                (racer-turn-on-eldoc)
+;;                ;; Use flycheck-rust in rust-mode
+;;                (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
+;;                ;; Use company-racer in rust mode
+;;                (set (make-local-variable 'company-backends) '((company-racer company-yasnippet)))
+;;                ;; Key binding to jump to method definition
+;;                (local-set-key (kbd "M-.") #'racer-find-definition)
+;;                ;; Key binding to auto complete and indent
+;;                (local-set-key (kbd "TAB") #'racer-complete-or-indent))))
 
 (use-package exec-path-from-shell :ensure t
   :config

@@ -53,7 +53,7 @@
                 ("*bold*" "粗体" "\t") ("/italic/" "斜体" "\t") ("_underline_" "下划线" "\n")
                 ("=code=" "代码体" "\t") ("~verbatime~" "unknown" "\t") ("+strike-through+" "unknown" "\n")
                 "其他"
-                ("[fn:n]" "脚注" "\t") ("S-TAB" "全展开" "\t") ("[[link]][[content]]" "插入链接" "\t") ("[[file:~/path]]" "插入图片" "\n")
+                ("[fn:n]" "脚注" "\t") ("S-TAB" "全展开" "\t") ("[[link][content]]" "插入链接" "\t") ("[[file:~/path]]" "插入图片" "\n")
                 ])
    (hints-show hints))
 
