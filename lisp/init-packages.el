@@ -150,6 +150,14 @@
         (progn (split-window-right) (windmove-right)))
       (find-file filename wildcards))
     (golden-ratio))
+
+  ;; find-file-this-window
+  (defun find-file-this-window(filename &optional wildcards)
+    "find file to new window"
+    (interactive
+     (find-file-read-args "Find file in new window: "
+                          (confirm-nonexistent-file-or-buffer)))
+     (find-file filename wildcards))
   
   (defun qxg-leader/set-leader (key)
     "设置自己的leader"
@@ -207,6 +215,7 @@
   (evil-leader/set-key
     "ee" 'open-eshell-below-window
     "f" 'find-file-new-window
+    ",f" 'find-file-this-window
     "q" 'evil-quit
     "w" 'save-buffer
     "x" 'evil-save-and-quit
